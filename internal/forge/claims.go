@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ismailtasdelen/JWTScout/internal/parser"
+	"github.com/ismailtsdln/JWTScout/internal/parser"
 )
 
 // Forger handles token modification

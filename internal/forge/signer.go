@@ -9,7 +9,7 @@ import (
 	"hash"
 	"strings"
 
-	"github.com/ismailtasdelen/JWTScout/internal/parser"
+	"github.com/ismailtsdln/JWTScout/internal/parser"
 )
 
 // Signer handles re-signing modified tokens

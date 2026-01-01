@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ismailtasdelen/JWTScout/internal/parser"
+	"github.com/ismailtsdln/JWTScout/internal/parser"
 )
 
 // BruteForcer performs HMAC secret brute forcing

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/ismailtasdelen/JWTScout/cmd"
+	"github.com/ismailtsdln/JWTScout/cmd"
 )
 
 func main() {

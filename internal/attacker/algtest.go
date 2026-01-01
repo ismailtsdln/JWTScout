@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ismailtasdelen/JWTScout/internal/parser"
+	"github.com/ismailtsdln/JWTScout/internal/parser"
 )
 
 // AlgTest performs algorithm vulnerability testing

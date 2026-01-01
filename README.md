@@ -15,7 +15,7 @@ JWTScout is a production-ready CLI-based JWT security testing tool written in Go
 
 ```bash
 # Clone the repository
-git clone https://github.com/ismailtasdelen/JWTScout.git
+git clone https://github.com/ismailtsdln/JWTScout.git
 
 # Navigate to directory
 cd JWTScout

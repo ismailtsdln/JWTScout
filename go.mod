@@ -1,4 +1,4 @@
-module github.com/ismailtasdelen/JWTScout
+module github.com/ismailtsdln/JWTScout
 
 go 1.25.5
 

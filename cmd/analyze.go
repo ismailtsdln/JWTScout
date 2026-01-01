@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ismailtasdelen/JWTScout/internal/attacker"
-	"github.com/ismailtasdelen/JWTScout/internal/parser"
+	"github.com/ismailtsdln/JWTScout/internal/attacker"
+	"github.com/ismailtsdln/JWTScout/internal/parser"
 	"github.com/spf13/cobra"
 )
 

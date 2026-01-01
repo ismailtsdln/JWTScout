@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/ismailtasdelen/JWTScout/internal/reporter"
+	"github.com/ismailtsdln/JWTScout/internal/reporter"
 	"github.com/spf13/cobra"
 )
 

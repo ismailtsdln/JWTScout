@@ -3,7 +3,7 @@ package validator
 import (
 	"strings"
 
-	"github.com/ismailtasdelen/JWTScout/internal/parser"
+	"github.com/ismailtsdln/JWTScout/internal/parser"
 )
 
 // Validator performs security validation on JWT tokens

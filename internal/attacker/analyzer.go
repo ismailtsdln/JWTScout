@@ -1,8 +1,8 @@
 package attacker
 
 import (
-	"github.com/ismailtasdelen/JWTScout/internal/parser"
-	"github.com/ismailtasdelen/JWTScout/internal/validator"
+	"github.com/ismailtsdln/JWTScout/internal/parser"
+	"github.com/ismailtsdln/JWTScout/internal/validator"
 )
 
 // Analyzer performs comprehensive token analysis

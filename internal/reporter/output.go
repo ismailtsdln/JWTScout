@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	"github.com/ismailtasdelen/JWTScout/internal/parser"
-	"github.com/ismailtasdelen/JWTScout/internal/validator"
+	"github.com/ismailtsdln/JWTScout/internal/parser"
+	"github.com/ismailtsdln/JWTScout/internal/validator"
 )
 
 // Reporter handles formatted output for JWTScout
@@ -33,7 +33,7 @@ func (r *Reporter) PrintBanner() {
 \____/  \_/\_/   \_/ \____/ \____/\___/ \__,_|___/\__|
                                                       
          JWT Security Testing Tool v1.0
-         github.com/ismailtasdelen/JWTScout
+         github.com/ismailtsdln/JWTScout
 `
 	color.Cyan(banner)
 	fmt.Println()
