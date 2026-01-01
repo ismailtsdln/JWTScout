@@ -1,6 +1,7 @@
 package forge
 
 import (
+	"strconv"
 	"strings"
 	"time"
 
@@ -66,6 +67,22 @@ func (f *Forger) SetAdminRole() {
 func (f *Forger) ParseClaimString(claimStr string) {
 	parts := strings.SplitN(claimStr, "=", 2)
 	if len(parts) == 2 {
-		f.SetClaim(parts[0], parts[1])
+		key := parts[0]
+		val := parts[1]
+
+		// Try to parse as integer
+		if i, err := strconv.ParseInt(val, 10, 64); err == nil {
+			f.SetClaim(key, float64(i)) // JSON unmarshal uses float64 for all numbers
+			return
+		}
+
+		// Try to parse as boolean
+		if b, err := strconv.ParseBool(val); err == nil {
+			f.SetClaim(key, b)
+			return
+		}
+
+		// Default to string
+		f.SetClaim(key, val)
 	}
 }

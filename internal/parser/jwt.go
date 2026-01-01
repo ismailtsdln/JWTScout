@@ -104,8 +104,19 @@ func DecodePayload(payloadB64 string) (*Payload, error) {
 	if sub, ok := rawPayload["sub"].(string); ok {
 		payload.Sub = sub
 	}
-	if aud, ok := rawPayload["aud"].(string); ok {
-		payload.Aud = aud
+	if aud, ok := rawPayload["aud"]; ok {
+		switch v := aud.(type) {
+		case string:
+			payload.Aud = v
+		case []interface{}:
+			var auds []string
+			for _, item := range v {
+				if s, ok := item.(string); ok {
+					auds = append(auds, s)
+				}
+			}
+			payload.Aud = strings.Join(auds, ", ")
+		}
 	}
 	if jti, ok := rawPayload["jti"].(string); ok {
 		payload.Jti = jti
@@ -126,23 +137,14 @@ func DecodePayload(payloadB64 string) (*Payload, error) {
 }
 
 // base64URLDecode decodes a base64url-encoded string
-// JWT uses base64url encoding (RFC 4648) which is different from standard base64
 func base64URLDecode(s string) ([]byte, error) {
-	// Add padding if necessary
-	switch len(s) % 4 {
-	case 2:
-		s += "=="
-	case 3:
-		s += "="
-	}
-
-	// Replace URL-safe characters with standard base64 characters
-	s = strings.ReplaceAll(s, "-", "+")
-	s = strings.ReplaceAll(s, "_", "/")
-
-	data, err := base64.StdEncoding.DecodeString(s)
+	data, err := base64.RawURLEncoding.DecodeString(s)
 	if err != nil {
-		return nil, ErrInvalidEncoding
+		// Try with standard padding if raw failed
+		data, err = base64.URLEncoding.DecodeString(s)
+		if err != nil {
+			return nil, ErrInvalidEncoding
+		}
 	}
 
 	return data, nil
@@ -150,16 +152,7 @@ func base64URLDecode(s string) ([]byte, error) {
 
 // base64URLEncode encodes data to base64url format
 func base64URLEncode(data []byte) string {
-	s := base64.StdEncoding.EncodeToString(data)
-
-	// Remove padding
-	s = strings.TrimRight(s, "=")
-
-	// Replace standard base64 characters with URL-safe characters
-	s = strings.ReplaceAll(s, "+", "-")
-	s = strings.ReplaceAll(s, "/", "_")
-
-	return s
+	return base64.RawURLEncoding.EncodeToString(data)
 }
 
 // Base64URLEncode is exported for use in other packages

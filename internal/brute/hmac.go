@@ -1,10 +1,10 @@
 package brute
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"crypto/sha512"
-	"encoding/base64"
 	"fmt"
 	"hash"
 	"strings"
@@ -42,6 +42,9 @@ func NewBruteForcer(token *parser.JWTToken, numWorkers int) (*BruteForcer, error
 
 // BruteForce attempts to find the secret using a wordlist
 func (bf *BruteForcer) BruteForce(wordlist []string) (string, bool) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	// Get the signing input (header.payload)
 	parts := strings.Split(bf.token.Raw, ".")
 	if len(parts) != 3 {
@@ -60,7 +63,7 @@ func (bf *BruteForcer) BruteForce(wordlist []string) (string, bool) {
 		secret string
 		found  bool
 	}
-	results := make(chan result, bf.numWorkers)
+	results := make(chan result) // unbuffered, we only need one
 
 	// Start worker pool
 	var wg sync.WaitGroup
@@ -68,10 +71,22 @@ func (bf *BruteForcer) BruteForce(wordlist []string) (string, bool) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			for secret := range secrets {
-				if bf.verifySignature(signingInput, expectedSig, secret) {
-					results <- result{secret: secret, found: true}
+			for {
+				select {
+				case <-ctx.Done():
 					return
+				case secret, ok := <-secrets:
+					if !ok {
+						return
+					}
+					if bf.verifySignature(signingInput, expectedSig, secret) {
+						select {
+						case results <- result{secret: secret, found: true}:
+							cancel() // stop others
+						case <-ctx.Done():
+						}
+						return
+					}
 				}
 			}
 		}()
@@ -79,10 +94,14 @@ func (bf *BruteForcer) BruteForce(wordlist []string) (string, bool) {
 
 	// Feed wordlist to workers
 	go func() {
+		defer close(secrets)
 		for _, word := range wordlist {
-			secrets <- word
+			select {
+			case <-ctx.Done():
+				return
+			case secrets <- word:
+			}
 		}
-		close(secrets)
 	}()
 
 	// Wait for workers in separate goroutine
@@ -121,16 +140,8 @@ func (bf *BruteForcer) verifySignature(signingInput, expectedSig, secret string)
 	signature := h.Sum(nil)
 
 	// Encode to base64url
-	actualSig := base64URLEncode(signature)
+	actualSig := parser.Base64URLEncode(signature)
 
-	return actualSig == expectedSig
-}
-
-// base64URLEncode encodes to base64url format (same as parser)
-func base64URLEncode(data []byte) string {
-	s := base64.StdEncoding.EncodeToString(data)
-	s = strings.TrimRight(s, "=")
-	s = strings.ReplaceAll(s, "+", "-")
-	s = strings.ReplaceAll(s, "/", "_")
-	return s
+	// Use hmac.Equal for constant-time comparison
+	return hmac.Equal([]byte(actualSig), []byte(expectedSig))
 }

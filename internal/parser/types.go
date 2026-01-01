@@ -8,7 +8,6 @@ type JWTToken struct {
 	Header    Header
 	Payload   Payload
 	Signature string
-	Valid     bool
 }
 
 // Header represents the JWT header

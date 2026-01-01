@@ -43,31 +43,33 @@ func (v *Validator) checkAlgorithm(token *parser.JWTToken) {
 	}
 
 	// Check for weak/deprecated algorithms
-	weakAlgorithms := []string{"hs256", "hs384", "hs512", "rs256"}
-	for _, weak := range weakAlgorithms {
-		if alg == weak {
-			// HS* algorithms are potentially vulnerable to brute force
-			if strings.HasPrefix(alg, "hs") {
-				v.addFinding(NewFinding(
-					FindingWeakAlgorithm,
-					SeverityWarning,
-					"HMAC Algorithm Detected",
-					"HMAC algorithms may be vulnerable to brute force attacks if weak secrets are used",
-					"Algorithm: "+token.Header.Alg,
-				))
-			}
-			break
-		}
-	}
-
-	// Check for RS256 (potential algorithm confusion)
-	if alg == "rs256" {
+	// RS256 is commonly used but often involved in algorithm confusion
+	if alg == "hs256" || alg == "hs384" || alg == "hs512" {
+		v.addFinding(NewFinding(
+			FindingWeakAlgorithm,
+			SeverityWarning,
+			"HMAC Algorithm Detected",
+			"HMAC algorithms may be vulnerable to brute force attacks if weak secrets are used",
+			"Algorithm: "+token.Header.Alg,
+		))
+	} else if alg == "rs256" {
 		v.addFinding(NewFinding(
 			FindingAlgConfusion,
 			SeverityWarning,
 			"RS256 Algorithm Confusion Risk",
 			"RS256 tokens may be vulnerable to algorithm confusion attacks (RS256→HS256)",
 			"Attackers may attempt to switch the algorithm to HS256 and sign with the public key",
+		))
+	}
+
+	// Check for missing typ header
+	if token.Header.Typ == "" {
+		v.addFinding(NewFinding(
+			FindingMissingTyp,
+			SeverityInfo,
+			"Missing 'typ' Header",
+			"The 'typ' header is not set. It should be set to 'JWT' per RFC 7519.",
+			"Missing type header can sometimes lead to context confusion in heterogeneous systems.",
 		))
 	}
 }
@@ -191,7 +193,8 @@ func (v *Validator) checkKid(token *parser.JWTToken) {
 	}
 
 	// Check for null/empty kid
-	if strings.TrimSpace(kid) == "" || kid == "null" || kid == "NULL" {
+	trimmedKid := strings.TrimSpace(kid)
+	if trimmedKid == "" || strings.ToLower(trimmedKid) == "null" {
 		v.addFinding(FindingTemplateSuspiciousKid(
 			kid,
 			"Empty or null kid value",
