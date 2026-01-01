@@ -34,6 +34,16 @@
 
 - [Go](https://golang.org/doc/install) 1.18 or higher.
 
+### Quick Install (Recommended)
+
+If you have Go installed, you can install JWTScout directly:
+
+```bash
+go install -v github.com/ismailtsdln/JWTScout@latest
+```
+
+This will automatically download, compile, and install the `JWTScout` binary to your `$GOPATH/bin` directory.
+
 ### Build from Source
 
 ```bash
