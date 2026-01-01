@@ -1,5 +1,7 @@
 package validator
 
+import "fmt"
+
 // Severity levels for findings
 type Severity int
 
