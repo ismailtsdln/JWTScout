@@ -1,8 +1,8 @@
 package attacker
 
 import (
+	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/ismailtasdelen/JWTScout/internal/parser"
 )
@@ -145,12 +145,12 @@ func (kt *KidTest) modifyKid(token *parser.JWTToken, kidValue string) (string, e
 	}
 
 	// Encode header and payload
-	headerJSON, err := jsonMarshal(newHeader)
+	headerJSON, err := json.Marshal(newHeader)
 	if err != nil {
 		return "", err
 	}
 
-	payloadJSON, err := jsonMarshal(token.Payload.Raw)
+	payloadJSON, err := json.Marshal(token.Payload.Raw)
 	if err != nil {
 		return "", err
 	}
@@ -160,13 +160,4 @@ func (kt *KidTest) modifyKid(token *parser.JWTToken, kidValue string) (string, e
 
 	// Return unsigned token (signature would be invalid anyway)
 	return fmt.Sprintf("%s.%s.UNSIGNED", headerB64, payloadB64), nil
-}
-
-// Helper function to avoid import cycle
-func jsonMarshal(v interface{}) ([]byte, error) {
-	// Import encoding/json locally
-	var buf strings.Builder
-	// For now, we'll use a simple approach
-	// In production, we'd properly marshal JSON
-	return []byte(fmt.Sprintf("%v", v)), nil
 }
