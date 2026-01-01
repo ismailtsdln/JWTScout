@@ -33,22 +33,22 @@ type FindingType string
 
 const (
 	// Algorithm-related findings
-	FindingAlgNone          FindingType = "ALG_NONE"
-	FindingWeakAlgorithm    FindingType = "WEAK_ALGORITHM"
-	FindingAlgConfusion     FindingType = "ALG_CONFUSION_RISK"
-	
+	FindingAlgNone       FindingType = "ALG_NONE"
+	FindingWeakAlgorithm FindingType = "WEAK_ALGORITHM"
+	FindingAlgConfusion  FindingType = "ALG_CONFUSION_RISK"
+
 	// Expiration-related findings
-	FindingNoExpiration     FindingType = "NO_EXPIRATION"
-	FindingExpired          FindingType = "EXPIRED"
-	FindingLongExpiration   FindingType = "LONG_EXPIRATION"
-	
+	FindingNoExpiration   FindingType = "NO_EXPIRATION"
+	FindingExpired        FindingType = "EXPIRED"
+	FindingLongExpiration FindingType = "LONG_EXPIRATION"
+
 	// Claim-related findings
 	FindingMissingClaims    FindingType = "MISSING_CLAIMS"
 	FindingSuspiciousClaims FindingType = "SUSPICIOUS_CLAIMS"
-	
+
 	// Header-related findings
-	FindingSuspiciousKid    FindingType = "SUSPICIOUS_KID"
-	FindingMissingTyp       FindingType = "MISSING_TYP"
+	FindingSuspiciousKid FindingType = "SUSPICIOUS_KID"
+	FindingMissingTyp    FindingType = "MISSING_TYP"
 )
 
 // Finding represents a security finding
@@ -133,6 +133,3 @@ var (
 		)
 	}
 )
-
-// Import fmt package for sprintf
-import "fmt"
